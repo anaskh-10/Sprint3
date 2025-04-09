@@ -1,22 +1,34 @@
 package entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 @Entity
 public class Pc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPc;
+    @NotNull
     private String marquePc;
+    @NotNull
     private String referencePc;
+    @NotNull
     private Double prixPc;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateCreation;
+    @OneToMany(mappedBy = "pc", cascade = CascadeType.ALL)
+    private List<Component> components = new ArrayList<>();
 
     public Pc() {
+    }
+    public Long getIdPc() {
+        return idPc;
     }
 
     public Pc(Long idPc, String marquePc, String referencePc, Double prixPc, Date dateCreation) {
@@ -25,10 +37,6 @@ public class Pc {
         this.referencePc = referencePc;
         this.prixPc = prixPc;
         this.dateCreation = dateCreation;
-    }
-
-    public Long getIdPc() {
-        return idPc;
     }
 
     public void setIdPc(Long idPc) {

@@ -15,7 +15,10 @@
 //class PcApplicationTests {
 //	@Autowired
 //	private PcRepository pcRepository;
+//
+//    @Autowired
 //	private PcService pcService;
+//
 //	@Test
 //	public void testCreatePc(){
 //		Pc p=new Pc();
@@ -63,6 +66,15 @@
 //{
 //System.out.println(p);
 //} */
+//    }
+//    @Test
+//    public void testFindByMarquePc()
+//    {
+//        List<Pc> pcs = pcRepository.findByMarquePc("dell");
+//        for (Pc p : pcs)
+//        {
+//            System.out.println(p);
+//        }
 //    }
 //
 //}

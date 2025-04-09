@@ -1,5 +1,6 @@
 package service;
 
+import entities.Component;
 import entities.Pc;
 import org.springframework.data.domain.Page;
 
@@ -13,5 +14,5 @@ public interface PcService {
     Pc getPc(Long id);
     List<Pc> getAllPcs();
     Page<Pc> getAllPcsParPage(int page, int size);
-
+    List<Pc> findByComponent(Component component);
 }
