@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<link rel="stylesheet" type="text/css"
-      href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
 <head>
-    <meta charset="UTF-8">
-    <title>Liste des Pcs</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.0.0/css/bootstrap.min.css}" />
+    <meta charset="utf-8">
+    <title>Liste des Produits</title>
 </head>
 <body>
 <div th:replace="template"></div>
@@ -25,9 +23,14 @@
                     <td th:text="${p.idPc}"></td>
                     <td th:text="${p.marquePc}"></td>
                     <td th:text="${p.prixPc}"></td>
-                    <td><a class="btn btn-danger" onclick="return confirm('Etes-vous sûr ?')" th:href="@{supprimerProduit(id=${p.idProduit},
+                    <td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-danger" onclick="return confirm('Etes-vous sûr ?')" th:href="@{supprimerProduit(id=${p.idProduit},
                     page=${currentPage},size=${size})}">Supprimer</a>
                     </td>
+                    <td th:if= "${!#strings.isEmpty(p.fournisseur)}" th:text="${p.fournisseur.nom}"></td>
+                    <td th:if= "${#strings.isEmpty(p.fournisseur)}" th:text="${'Pas de fournisseur'}"></td>
+                    <td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-success"
+                           th:href="@{modifierPc(id=${p.idPc},page=${currentPage},size=${size})}"
+                    >Editer</a></td>
                 </tr>
             </table>
             <ul class="nav nav-pills">
