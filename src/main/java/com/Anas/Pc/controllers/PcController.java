@@ -1,5 +1,6 @@
 package com.Anas.Pc.controllers;
 
+import com.Anas.Pc.dto.PcDTO;
 import com.Anas.Pc.entities.Fournisseur;
 import com.Anas.Pc.entities.Pc;
 import jakarta.validation.Valid;
@@ -24,14 +25,14 @@ public class PcController {
 
     @Autowired
     PcService pcService;
-
     @RequestMapping("/listes")
     public String listes(ModelMap modelMap,@RequestParam (name="page",defaultValue = "0") int page,
-    @RequestParam (name="size", defaultValue = "2") int size) {
+    @RequestParam (name="size", defaultValue = "5") int size) {
         Page<Pc> pcs = pcService.getAllPcsParPage(page, size);
         modelMap.addAttribute("pcs", pcs);
         modelMap.addAttribute("pages", new int[pcs.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
+        modelMap.addAttribute("size", size);  // Size of each page
         return "listePcs";  // Return the thymeleaf template for the list of PCs
     }
 
@@ -40,16 +41,16 @@ public class PcController {
         List<Fournisseur> fours=pcService.getAllFournisseur();
         modelMap.addAttribute("pc",new Pc());
         modelMap.addAttribute("mode", "new");
-        modelMap.addAttribute("fournisseur",fours);
+        modelMap.addAttribute("fournisseurs",fours);
         return "formPc";  // Return the createPc template
     }
 
     @RequestMapping("/savePc")
-    public String savePc(@Valid Pc pc, BindingResult bindingResult,@RequestParam (name="page",defaultValue = "0") int page,
-                         @RequestParam (name="size",defaultValue = "2") int size){
+    public String savePc(@Valid PcDTO pc, BindingResult bindingResult,@RequestParam (name="page",defaultValue = "0") int page,
+                         @RequestParam (name="size",defaultValue = "5") int size){
             int currentPage;
             boolean isNew = false;
-        if(bindingResult.hasErrors())return "createPc";
+        if(bindingResult.hasErrors())return "formPc";
         if (pc.getIdPc() ==null) //ajout
             isNew=true;
         pcService.savePc(pc);
@@ -60,7 +61,7 @@ public class PcController {
         }
         else //modif
             currentPage=page;
-        return ("redirect:/ListeProduits?page="+currentPage+"&size="+size);
+        return ("redirect:/listes?page="+currentPage+"&size="+size);
     }
     @GetMapping(value = "/")
     public String welcome() {
@@ -68,7 +69,7 @@ public class PcController {
     }
     @RequestMapping("/supprimerPc")
     public String supprimerPc(@RequestParam("id") Long id, ModelMap modelMap,@RequestParam (name="page",defaultValue = "0") int page,
-                              @RequestParam (name="size", defaultValue = "2") int size) {
+                              @RequestParam (name="size", defaultValue = "5") int size) {
         pcService.deletePcById(id);
 
         Page<Pc> pcs = pcService.getAllPcsParPage(page, size);
@@ -79,31 +80,32 @@ public class PcController {
         return "listePcs";
     }
 
-    @RequestMapping("/modifierPc")
-    public String editerPc(@RequestParam("id") Long id, ModelMap modelMap) {
-        // Get the PC to be edited by ID
-        Pc p = pcService.getPc(id);
-        List<Fournisseur> fours=pcService.getAllFournisseur();
-        modelMap.addAttribute("pc", p);
-        modelMap.addAttribute("mode","edit");
-        modelMap.addAttribute("fournisseur",fours);
-        return "formPc";  // Return the edit template
+    @GetMapping("/modifierPc")
+    public String modifierPc(@RequestParam("id") Long id, ModelMap modelMap,
+                                  @RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(defaultValue = "5") int size) {
+        PcDTO pc = pcService.getPc(id);
+        modelMap.addAttribute("pc", pc);
+        modelMap.addAttribute("fournisseurs", pcService.getAllFournisseur());
+        modelMap.addAttribute("mode", "edit");
+        modelMap.addAttribute("page", page);
+        modelMap.addAttribute("size", size);
+        return "formPc"; // Le nom du fichier .html
     }
 
+
     @RequestMapping("/updatePc")
-    public String updatePc(@ModelAttribute("pc") Pc pc, @RequestParam("date") String date, ModelMap modelMap) throws ParseException {
-        // Convert the date string to Date object
+    public String updatePc(@ModelAttribute("pc") PcDTO pc,
+                           @RequestParam("date") String date,
+                           @RequestParam(name = "page", defaultValue = "0") int currentPage,
+                           @RequestParam(name = "size", defaultValue = "5") int size) throws ParseException {
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateCreation = dateformat.parse(date);
         pc.setDateCreation(dateCreation);
 
-        // Update the PC
         pcService.updatePc(pc);
 
-        // Get the updated list of PCs
-        List<Pc> pcs = pcService.getAllPcs();
-        modelMap.addAttribute("pcs", pcs);
-
-        return "listePcs";  // Return to the list view after update
+        return ("redirect:/listes?page="+currentPage+"&size="+size);
     }
+
 }

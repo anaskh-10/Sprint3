@@ -1,5 +1,6 @@
 package com.Anas.Pc.restControllers;
 
+import com.Anas.Pc.dto.PcDTO;
 import com.Anas.Pc.entities.Pc;
 import com.Anas.Pc.service.PcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +15,20 @@ public class PcRESTController {
     @Autowired
     PcService pcService;
     @RequestMapping(method = RequestMethod.GET)
-    List<Pc>getAllPcs(){
+    List<PcDTO>getAllPcs(){
         return pcService.getAllPcs();
     }
     @RequestMapping(value="/{id}",method = RequestMethod.GET)
-    public Pc getPcById(@PathVariable("id") Long id) {
+    public PcDTO getPcById(@PathVariable("id") Long id) {
         return pcService.getPc(id);
     }
     @RequestMapping(method = RequestMethod.POST)
-    public Pc createPc(@RequestBody Pc pc) {
-        return pcService.savePc(pc);
+    public PcDTO createPc(@RequestBody PcDTO pcDTO) {
+        return pcService.savePc(pcDTO);
     }
     @RequestMapping(method = RequestMethod.PUT)
-    public Pc updatePc(@RequestBody Pc pc) {
-        return pcService.updatePc(pc);
+    public PcDTO updatePc(@RequestBody PcDTO pcDTO) {
+        return pcService.updatePc(pcDTO);
     }
     @RequestMapping(value="/{id}",method = RequestMethod.DELETE)
     public void deletePc(@PathVariable("id") Long id)

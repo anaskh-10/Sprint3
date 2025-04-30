@@ -17,7 +17,7 @@ public class Pc {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPc;
     @NotNull
-    @Size(min = 4,max = 15)
+    @Size(min = 2,max = 10)
     private String marquePc;
     @NotNull
     @Size(min = 4,max = 15)

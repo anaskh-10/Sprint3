@@ -1,65 +1,57 @@
+<!-- template.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec=https://www.thymeleaf.org/thymeleaf-extras-springsecurity6>
-
-<link rel="stylesheet" type="text/css"
-      href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
-<script src="webjars/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript"
-        src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
 <head>
     <meta charset="utf-8">
-    <title>Gestion des Pcs</title>
+    <title>Gestion des PCs</title>
+    <link rel="stylesheet" type="text/css"
+          href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script src="webjars/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
+
 <body>
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-    <!-- Brand -->
-    <a class="navbar-brand" href="#">Gestion Pcs</a>
-    <!-- Links -->
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/pcs/ListePcs}" >Home</a>
-        </li>
-        <!-- Dropdown -->
-        <li class="nav-item dropdown">
-                  Pcs
-            </a>
-            <div class="dropdown-menu">
-                <a sec:authorize="hasAnyAuthority('ADMIN', 'AGENT')" class="dropdown-item" th:href="@{/pcs/showCreate}">Ajouter</a>
-                <a class="dropdown-item" th:href="@{/pcs/ListePcs}">Lister</a>
-            </div>
-        </li>
-    </ul>
-    <ul class="navbar-nav ml-auto" >
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                <span sec:authentication="name"></span>
-            </a>
+<!-- 👇 ADD THIS FRAGMENT AROUND THE NAV -->
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Gestion PCs</a>
 
-            <div class="dropdown-menu">
-                <a sec:authorize="!isAuthenticated()" class="dropdown-item"
-                   th:href="@{login}">login</a>
-                <a sec:authorize="isAuthenticated()" class="dropdown-item"
-                   th:href="@{logout}">logout</a>
-                <a class="dropdown-item" href="#">Profile</a>
-            </div>
-        </li>
-    </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{listes}">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="pcsDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    PCs
+                </a>
+                <div class="dropdown-menu" aria-labelledby="pcsDropdown">
+                    <a sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_AGENT')" class="dropdown-item" th:href="@{/showCreate}">Ajouter</a>
+                    <a class="dropdown-item" th:href="@{/listes}">Lister</a>
+                </div>
+            </li>
+        </ul>
 
-    <ul class="navbar-nav ml-auto" >
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                [username]
-            </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">login</a>
-                <a class="dropdown-item" href="#">logout</a>
-                <a class="dropdown-item" href="#">Profile</a>
-            </div>
-        </li>
-    </ul>
-</nav>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span sec:authentication="name"></span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="userDropdown">
+                    <a sec:authorize="!isAuthenticated()" class="dropdown-item" th:href="@{/login}">Login</a>
+                    <a sec:authorize="isAuthenticated()" class="dropdown-item" th:href="@{/logout}">Logout</a>
+                    <a class="dropdown-item" href="#">Profile</a>
+                </div>
+            </li>
+        </ul>
+
+    </nav>
+</div>
+
 </body>
 </html>

@@ -1,15 +1,22 @@
 package com.Anas.Pc.service;
 
+import com.Anas.Pc.dto.PcDTO;
 import com.Anas.Pc.entities.Fournisseur;
 import com.Anas.Pc.entities.Pc;
 import com.Anas.Pc.repos.FournisseurRepository;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.Anas.Pc.repos.PcRepository;
+import org.springframework.ui.ModelMap;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PcServiceImpl implements PcService{
     @Autowired
@@ -18,14 +25,28 @@ public class PcServiceImpl implements PcService{
     @Autowired
     FournisseurRepository fournisseurRepository;
 
+    @Autowired
+    ModelMapper modelMapper;
+
     @Override
-    public Pc savePc(Pc p) {
-        return pcRepository.save(p);
+    public PcDTO savePc(PcDTO p) {
+        return convertEntityToDto(pcRepository.save(convertDtoToEntity(p))) ;
     }
 
     @Override
-    public Pc updatePc(Pc p) {
-        return pcRepository.save(p);
+    public PcDTO getPc(Long id) {
+        return convertEntityToDto(pcRepository.findById(id).get());
+    }
+
+    @Override
+    public List<PcDTO> getAllPcs() {
+        return pcRepository.findAll().stream()
+                .map(this::convertEntityToDto).collect(Collectors.toList()) ;
+    }
+
+    @Override
+    public PcDTO updatePc(PcDTO pc) {
+        return convertEntityToDto(pcRepository.save(convertDtoToEntity(pc)));
     }
 
     @Override
@@ -38,15 +59,7 @@ public class PcServiceImpl implements PcService{
         pcRepository.deleteById(id);
     }
 
-    @Override
-    public Pc getPc(Long id) {
-        return pcRepository.findById(id).get();
-    }
 
-    @Override
-    public List<Pc> getAllPcs() {
-        return pcRepository.findAll();
-    }
 
     @Override
     public Page<Pc> getAllPcsParPage(int page, int size) {
@@ -90,5 +103,36 @@ public class PcServiceImpl implements PcService{
     @Override
     public List<Fournisseur> getAllFournisseur() {
         return fournisseurRepository.findAll();
+    }
+
+    @Override
+    public PcDTO convertEntityToDto(Pc pc) {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+        return modelMapper.map(pc,PcDTO.class);
+//        pcDTO.setIdPc(pc.getIdPc());
+//        pcDTO.setMarquePc(pc.getMarquePc());
+//        pcDTO.setReferencePc(pc.getReferencePc());
+//        pcDTO
+//        return PcDTO.builder()
+//                .idPc(pc.getIdPc())
+//                .marquePc(pc.getMarquePc())
+//                .referencePc(pc.getReferencePc())
+//                .prixPc(pc.getPrixPc())
+//                .dateCreation(pc.getDateCreation())
+//                .fournisseur(pc.getFournisseur())
+//                .build();
+    }
+
+    @Override
+    public Pc convertDtoToEntity(PcDTO pcDTO) {
+        Pc pc=new Pc();
+        pc=modelMapper.map(pcDTO, Pc.class);
+//        pc.setIdPc(pcDTO.getIdPc());
+//        pc.setMarquePc(pcDTO.getMarquePc());
+//        pc.setReferencePc(pcDTO.getReferencePc());
+//        pc.setPrixPc(pcDTO.getPrixPc());
+//        pc.setDateCreation(pcDTO.getDateCreation());
+//        pc.setFournisseur(pcDTO.getFournisseur());
+        return pc;
     }
 }

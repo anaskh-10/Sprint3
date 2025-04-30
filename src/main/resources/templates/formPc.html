@@ -3,101 +3,68 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un PC</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title >Formulaire PC</title>
+    <link rel="stylesheet" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
 </head>
 <body>
 <div th:replace="template"></div>
 
 <div class="container mt-5">
     <div class="card">
-        <div class="card-header" th:if="${mode=='new'}">
-            Ajouter un PC
-        </div>
-        <div class="card-header" th:if="${mode=='edit'}">Modification des PCs</div>
-        <div class="card-body">
+        <div class="card-header" th:if="${mode=='new'}"> Ajout des Pcs </div>
+        <div class="card-header" th:if="${mode=='edit'}">Modification des Pcs </div>
+            <div class="card-body">
             <form th:action="@{savePc}" method="post">
-                <!-- Hidden ID Field (to identify the PC being edited) -->
+
+                <input hidden name="page" class="form-control" th:value="${page}" />
+                <input hidden name="size" class="form-control" th:value="${size}" />
                 <div class="form-group">
                     <label class="control-label" hidden>ID Pc :</label>
-                    <input type="hidden" name="idPc" class="form-control" th:value="${pc.idPc}" />
+                    <input type="hidden" name="idPc" class="form-control" th:value="${pc.idPc}"  />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Marque du PC:</label>
+                    <input type="text" name="marquePc" class="form-control" th:value="${pc.marquePc}"/>
+                    <span th:errors="${pc.marquePc}" class="text-danger"></span>
                 </div>
 
-                <!-- Marque PC -->
-                <div class="mb-3">
-                    <label for="marquePc" class="form-label">Marque du PC</label>
-                    <input type="text" class="form-control" id="marquePc" th:field="*{marquePc}" required>
-                    <span th:if="${#fields.hasErrors('marquePc')}" th:errors="*{marquePc}" class="text-danger"></span>
+                <div class="form-group">
+                    <label>Référence du PC</label>
+                    <input type="text" name="referencePc" class="form-control" th:value="${pc.referencePc}" required />
+                    <span th:errors="${pc.referencePc}" class="text-danger"></span>
                 </div>
 
-                <!-- Référence PC -->
-                <div class="mb-3">
-                    <label for="referencePc" class="form-label">Référence du PC</label>
-                    <input type="text" class="form-control" id="referencePc" th:field="*{referencePc}" required>
-                    <span th:if="${#fields.hasErrors('referencePc')}" th:errors="*{referencePc}" class="text-danger"></span>
+                <div class="form-group">
+                    <label>Prix du PC</label>
+                    <input type="number" step="0.01" name="prixPc" class="form-control" th:value="${pc.prixPc}" required />
+                    <span th:errors="${pc.prixPc}" class="text-danger"></span>
                 </div>
 
-                <!-- Prix PC -->
-                <div class="mb-3">
-                    <label for="prixPc" class="form-label">Prix du PC</label>
-                    <input type="number" step="0.01" class="form-control" id="prixPc" th:field="*{prixPc}" required>
-                    <span th:if="${#fields.hasErrors('prixPc')}" th:errors="*{prixPc}" class="text-danger"></span>
+                <div class="form-group">
+                    <label>Date de création</label>
+                    <input type="date" name="dateCreation" class="form-control" th:value="${pc.dateCreation}" required />
+                    <span th:errors="${pc.dateCreation}" class="text-danger"></span>
                 </div>
 
-                <!-- Date de Création -->
-                <div class="mb-3">
-                    <label for="dateCreation" class="form-label">Date de Création</label>
-                    <input type="date" class="form-control" id="dateCreation" th:field="*{dateCreation}" required>
-                    <span th:if="${#fields.hasErrors('dateCreation')}" th:errors="*{dateCreation}" class="text-danger"></span>
+                <div class="form-group">
+                    <label>Fournisseur</label>
+                    <select name="fournisseur.id" class="form-control">
+                        <option value="">Sélectionnez un fournisseur</option>
+                        <option th:each="f : ${fournisseurs}"
+                                th:value="${f.id}"
+                                th:text="${f.nom + ' ' + f.prenom}"
+                                th:selected="${pc.fournisseur != null and f.id == pc.fournisseur.id}">
+                        </option>
+                    </select>
+                    <span th:errors="${pc.fournisseur}" class="text-danger"></span>
                 </div>
 
-                <!-- Fournisseur Dropdown -->
-                <div class="mb-3">
-                    <label  class="form-label">Fournisseur</label>
-
-                    <!-- Dropdown for Editing Mode -->
-                    <label>
-                        <select name="fournisseur.id" class="form-control"
-                                th:if="${!#strings.isEmpty(pc.fournisseur)}">
-                            <option th:each="fournisseur : ${fournisseurs}"
-                                    th:if="${mode == 'edit'}"
-                                    th:value="${fournisseur.id}"
-                                    th:text="${fournisseur.nom + ' ' + fournisseur.prenom}"
-                                    th:selected="${fournisseur.id == pc.fournisseur.id}">
-                            </option>
-                        </select>
-                    </label>
-
-                    <!-- Dropdown for Adding Mode -->
-                    <label>
-                        <select name="fournisseur.id" class="form-control"
-                                th:if="${#strings.isEmpty(pc.fournisseur)}">
-                            <option value="">Sélectionnez un fournisseur</option>
-                            <option th:each="fournisseur : ${fournisseurs}"
-                                    th:value="${fournisseur.id}"
-                                    th:text="${fournisseur.nom + ' ' + fournisseur.prenom}">
-                            </option>
-                        </select>
-                    </label>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary" th:text="${mode == 'new' ? 'Ajouter' : 'Enregistrer les modifications'}"></button>
-                <a th:href="@{/listePcs}" class="btn btn-secondary ms-2">Retour à la liste</a>
-                <label>
-                    <input name="page" class="form-control" th:value="${page}" />
-                </label>
-                <label>
-                    <input name="size" class="form-control" th:value="${size}" />
-                </label>
+                <button  type="submit" class="btn btn-primary">Valider</button>
+                <a th:href="@{/listes}" class="btn btn-secondary ml-2">Retour à la liste</a>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap JS (Optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
